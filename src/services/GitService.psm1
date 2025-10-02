@@ -3,6 +3,13 @@
 
 using module ../models/SyncOperation.psm1
 
+# Cache for git status (5 second TTL)
+$script:GitStatusCache = @{
+    LastUpdate = [datetime]::MinValue
+    Data = $null
+    TTL = 5  # seconds
+}
+
 function Invoke-GitPull {
     [CmdletBinding()]
     param(
@@ -178,7 +185,20 @@ function Invoke-GitPush {
 
 function Get-GitStatus {
     [CmdletBinding()]
-    param()
+    param(
+        [switch]$NoCache
+    )
+
+    # Check cache (5 second TTL for performance)
+    if (-not $NoCache) {
+        $now = Get-Date
+        $cacheAge = ($now - $script:GitStatusCache.LastUpdate).TotalSeconds
+
+        if ($cacheAge -lt $script:GitStatusCache.TTL -and $script:GitStatusCache.Data) {
+            Write-Verbose "Using cached git status (age: $([math]::Round($cacheAge, 1))s)"
+            return $script:GitStatusCache.Data
+        }
+    }
 
     $result = @{
         ModifiedFiles = @()
@@ -227,6 +247,10 @@ function Get-GitStatus {
         catch {
             # Fetch might fail if offline, that's okay
         }
+
+        # Update cache
+        $script:GitStatusCache.LastUpdate = Get-Date
+        $script:GitStatusCache.Data = $result
     }
     catch {
         Write-Warning "Error getting Git status: $($_.Exception.Message)"
