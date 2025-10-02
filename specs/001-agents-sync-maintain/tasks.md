@@ -51,23 +51,23 @@
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
 
 ### Contract Tests [P]
-- [ ] **T006** [P] Contract test for GitService in tests/contract/GitService.Tests.ps1 - Test git pull, commit, push, status operations
-- [ ] **T007** [P] Contract test for ValidationService in tests/contract/ValidationService.Tests.ps1 - Test file validation, syntax checking, credential scanning
-- [ ] **T008** [P] Contract test for SyncService in tests/contract/SyncService.Tests.ps1 - Test complete sync workflow (pull → validate → commit → push)
+- [x] **T006** [P] Contract test for GitService in tests/contract/GitService.Tests.ps1 - Test git pull, commit, push, status operations
+- [x] **T007** [P] Contract test for ValidationService in tests/contract/ValidationService.Tests.ps1 - Test file validation, syntax checking, credential scanning
+- [x] **T008** [P] Contract test for SyncService in tests/contract/SyncService.Tests.ps1 - Test complete sync workflow (pull → validate → commit → push)
 
 ### Integration Tests [P]
-- [ ] **T009** [P] Integration test Scenario 1 (Start Work - Pull Latest) in tests/integration/StartWork.Tests.ps1
+- [x] **T009** [P] Integration test Scenario 1 (Start Work - Pull Latest) in tests/integration/StartWork.Tests.ps1
 - [ ] **T010** [P] Integration test Scenario 2 (Create New Agent) in tests/integration/CreateAgent.Tests.ps1
 - [ ] **T011** [P] Integration test Scenario 3 (Modify Existing Agent) in tests/integration/ModifyAgent.Tests.ps1
 - [ ] **T012** [P] Integration test Scenario 4 (Delete Agent File) in tests/integration/DeleteAgent.Tests.ps1
 - [ ] **T013** [P] Integration test Scenario 5 (Check Status) in tests/integration/CheckStatus.Tests.ps1
-- [ ] **T014** [P] Integration test Scenario 6 (Handle Merge Conflict) in tests/integration/MergeConflict.Tests.ps1
+- [x] **T014** [P] Integration test Scenario 6 (Handle Merge Conflict) in tests/integration/MergeConflict.Tests.ps1
 - [ ] **T015** [P] Integration test Scenario 7 (Auto-Resolve Conflict) in tests/integration/AutoResolve.Tests.ps1
 - [ ] **T016** [P] Integration test Scenario 8 (Work Offline) in tests/integration/OfflineWork.Tests.ps1
 - [ ] **T017** [P] Integration test Scenario 9 (Fix Validation Errors) in tests/integration/ValidationErrors.Tests.ps1
 
 ### Unit Tests [P]
-- [ ] **T018** [P] Unit tests for Logger module in tests/unit/Logger.Tests.ps1 - Test log formatting, rotation, filtering
+- [x] **T018** [P] Unit tests for Logger module in tests/unit/Logger.Tests.ps1 - Test log formatting, rotation, filtering
 - [ ] **T019** [P] Unit tests for FileWatcher module in tests/unit/FileWatcher.Tests.ps1 - Test file change detection, event handling
 - [ ] **T020** [P] Unit tests for AgentFile model in tests/unit/AgentFile.Tests.ps1 - Test validation rules, state transitions
 
