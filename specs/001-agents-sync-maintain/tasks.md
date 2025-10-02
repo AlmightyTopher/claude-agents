@@ -82,10 +82,10 @@
 - [x] **T024** [P] SyncLog model class in src/models/SyncLog.psm1 - Properties: LogId, Operations, SessionStart, SessionEnd, TotalFiles, SuccessCount, FailureCount, ConflictCount
 
 ### Services (Sequential - Dependencies)
-- [ ] **T025** GitService in src/services/GitService.psm1 - Functions: Invoke-GitPull, Invoke-GitCommit, Invoke-GitPush, Get-GitStatus, Test-NetworkConnectivity
-- [ ] **T026** ValidationService in src/services/ValidationService.psm1 - Functions: Test-AgentFile, Test-Syntax, Find-Credentials, Get-ValidationErrors (depends on AgentFile model)
-- [ ] **T027** ConflictService in src/services/ConflictService.psm1 - Functions: Get-Conflicts, Resolve-ConflictAuto, Get-ResolutionGuidance (depends on Conflict model, GitService)
-- [ ] **T028** SyncService in src/services/SyncService.psm1 - Main orchestration: Sync-Repository, Get-SyncStatus, Write-SyncLog (depends on all models and services)
+- [x] **T025** GitService in src/services/GitService.psm1 - Functions: Invoke-GitPull, Invoke-GitCommit, Invoke-GitPush, Get-GitStatus, Test-NetworkConnectivity
+- [x] **T026** ValidationService in src/services/ValidationService.psm1 - Functions: Test-AgentFile, Test-Syntax, Find-Credentials, Get-ValidationErrors (depends on AgentFile model)
+- [x] **T027** ConflictService in src/services/ConflictService.psm1 - Functions: Get-Conflicts, Resolve-ConflictAuto, Get-ResolutionGuidance (depends on Conflict model, GitService)
+- [x] **T028** SyncService in src/services/SyncService.psm1 - Main orchestration: Sync-Repository, Get-SyncStatus, Write-SyncLog (depends on all models and services)
 
 ### CLI Commands (Sequential - Depends on Services)
 - [ ] **T029** Sync-Agents command in src/cli/Sync-Agents.ps1 - Parameters: -Force, -DryRun, -Message, -Path; Calls SyncService
