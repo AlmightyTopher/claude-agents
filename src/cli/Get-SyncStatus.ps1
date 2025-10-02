@@ -51,8 +51,8 @@ function Get-SyncStatus {
 
     process {
         try {
-            # Get status from service
-            $status = Get-SyncStatus
+            # Get status from service (from SyncService module)
+            $status = SyncService\Get-SyncStatus
 
             # JSON output mode
             if ($Json) {

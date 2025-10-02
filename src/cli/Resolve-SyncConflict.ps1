@@ -67,7 +67,7 @@ function Resolve-SyncConflict {
     process {
         try {
             # Get all conflicts
-            $conflicts = Get-Conflicts
+            $conflicts = ConflictService\Get-Conflicts
 
             if ($conflicts.Count -eq 0) {
                 Write-Host "✓ No conflicts detected!" -ForegroundColor Green
@@ -152,7 +152,7 @@ function Resolve-SyncConflict {
                 Write-Host "Strategy: $Strategy" -ForegroundColor Gray
                 Write-Host ""
 
-                $result = Resolve-ConflictAuto -FilePath $FilePath -Strategy $strategyEnum
+                $result = ConflictService\Resolve-ConflictAuto -FilePath $FilePath -Strategy $strategyEnum
 
                 if ($result.Success) {
                     Write-Host "✓ Conflict resolved successfully!" -ForegroundColor Green
@@ -181,7 +181,7 @@ function Resolve-SyncConflict {
             }
 
             # Provide resolution guidance
-            $guidance = Get-ResolutionGuidance -FilePath $FilePath -Strategy $strategyEnum
+            $guidance = ConflictService\Get-ResolutionGuidance -FilePath $FilePath -Strategy $strategyEnum
 
             Write-Host ""
             Write-Host "Conflict Resolution Guidance" -ForegroundColor Cyan

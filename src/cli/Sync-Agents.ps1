@@ -78,7 +78,7 @@ function Sync-Agents {
         try {
             # Check for deletions and prompt if needed
             if (-not $Force -and -not $DryRun) {
-                $gitStatus = Get-GitStatus
+                $gitStatus = GitService\Get-GitStatus
                 if ($gitStatus.DeletedFiles.Count -gt 0) {
                     Write-Host "The following files will be deleted:" -ForegroundColor Yellow
                     $gitStatus.DeletedFiles | ForEach-Object { Write-Host "  - $_" -ForegroundColor Yellow }
@@ -101,7 +101,7 @@ function Sync-Agents {
                 $syncParams.CustomMessage = $Message
             }
 
-            $result = Sync-Repository @syncParams
+            $result = SyncService\Sync-Repository @syncParams
 
             # Display results based on status
             switch ($result.Status) {
@@ -162,7 +162,7 @@ function Sync-Agents {
                     if ($result.FilesModified -gt 0 -or $result.FilesDeleted -gt 0) {
                         Write-Host "  Would commit $($result.FilesModified + $result.FilesDeleted) files:" -ForegroundColor Gray
 
-                        $gitStatus = Get-GitStatus
+                        $gitStatus = GitService\Get-GitStatus
                         $gitStatus.ModifiedFiles | ForEach-Object { Write-Host "    - $_ (modified)" -ForegroundColor Gray }
                         $gitStatus.UntrackedFiles | ForEach-Object { Write-Host "    - $_ (added)" -ForegroundColor Gray }
                         $gitStatus.DeletedFiles | ForEach-Object { Write-Host "    - $_ (deleted)" -ForegroundColor Gray }
