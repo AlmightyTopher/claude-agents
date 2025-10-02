@@ -44,16 +44,14 @@ class AgentSyncError {
     }
 
     [int] DetermineExitCode() {
-        switch ($this.Category) {
-            ([ErrorCategory]::Conflict) { return 1 }
-            ([ErrorCategory]::Validation) { return 2 }
-            ([ErrorCategory]::Network) { return 3 }
-            ([ErrorCategory]::Authentication) { return 4 }
-            ([ErrorCategory]::Git) { return 6 }
-            ([ErrorCategory]::FileSystem) { return 7 }
-            ([ErrorCategory]::Configuration) { return 8 }
-            default { return 5 }
-        }
+        if ($this.Category -eq [ErrorCategory]::Conflict) { return 1 }
+        if ($this.Category -eq [ErrorCategory]::Validation) { return 2 }
+        if ($this.Category -eq [ErrorCategory]::Network) { return 3 }
+        if ($this.Category -eq [ErrorCategory]::Authentication) { return 4 }
+        if ($this.Category -eq [ErrorCategory]::Git) { return 6 }
+        if ($this.Category -eq [ErrorCategory]::FileSystem) { return 7 }
+        if ($this.Category -eq [ErrorCategory]::Configuration) { return 8 }
+        return 5
     }
 
     [void] SetContext([hashtable]$context) {
@@ -250,28 +248,28 @@ function Show-ErrorMessage {
     .DESCRIPTION
     Shows error information with color-coding and resolution guidance.
 
-    .PARAMETER Error
+    .PARAMETER ErrorInfo
     AgentSyncError object to display.
 
     .EXAMPLE
-    Show-ErrorMessage -Error $error
+    Show-ErrorMessage -ErrorInfo $syncError
     #>
 
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [AgentSyncError]$Error
+        [AgentSyncError]$ErrorInfo
     )
 
     # Choose color based on severity
-    $severityColor = switch ($Error.Severity) {
+    $severityColor = switch ($ErrorInfo.Severity) {
         ([ErrorSeverity]::Low) { "Yellow" }
         ([ErrorSeverity]::Medium) { "Yellow" }
         ([ErrorSeverity]::High) { "Red" }
         ([ErrorSeverity]::Critical) { "Red" }
     }
 
-    $severitySymbol = switch ($Error.Severity) {
+    $severitySymbol = switch ($ErrorInfo.Severity) {
         ([ErrorSeverity]::Low) { "⚠" }
         ([ErrorSeverity]::Medium) { "⚠" }
         ([ErrorSeverity]::High) { "✗" }
@@ -279,30 +277,30 @@ function Show-ErrorMessage {
     }
 
     Write-Host ""
-    Write-Host "$severitySymbol Error: $($Error.Message)" -ForegroundColor $severityColor
-    Write-Host "  Category: $($Error.Category)" -ForegroundColor Gray
-    Write-Host "  Severity: $($Error.Severity)" -ForegroundColor Gray
+    Write-Host "$severitySymbol Error: $($ErrorInfo.Message)" -ForegroundColor $severityColor
+    Write-Host "  Category: $($ErrorInfo.Category)" -ForegroundColor Gray
+    Write-Host "  Severity: $($ErrorInfo.Severity)" -ForegroundColor Gray
 
-    if ($Error.DetailedMessage) {
-        Write-Host "  Details: $($Error.DetailedMessage)" -ForegroundColor Gray
+    if ($ErrorInfo.DetailedMessage) {
+        Write-Host "  Details: $($ErrorInfo.DetailedMessage)" -ForegroundColor Gray
     }
 
-    if ($Error.Context.Count -gt 0) {
+    if ($ErrorInfo.Context.Count -gt 0) {
         Write-Host "  Context:" -ForegroundColor Gray
-        foreach ($key in $Error.Context.Keys) {
-            Write-Host "    - $key: $($Error.Context[$key])" -ForegroundColor DarkGray
+        foreach ($key in $ErrorInfo.Context.Keys) {
+            Write-Host "    - ${key}: $($ErrorInfo.Context[$key])" -ForegroundColor DarkGray
         }
     }
 
-    if ($Error.Resolution) {
+    if ($ErrorInfo.Resolution) {
         Write-Host ""
         Write-Host "Resolution:" -ForegroundColor Cyan
-        Write-Host "  $($Error.Resolution)" -ForegroundColor White
+        Write-Host "  $($ErrorInfo.Resolution)" -ForegroundColor White
     }
 
     Write-Host ""
-    Write-Host "Error ID: $($Error.ErrorId)" -ForegroundColor DarkGray
-    Write-Host "Exit Code: $($Error.ExitCode)" -ForegroundColor DarkGray
+    Write-Host "Error ID: $($ErrorInfo.ErrorId)" -ForegroundColor DarkGray
+    Write-Host "Exit Code: $($ErrorInfo.ExitCode)" -ForegroundColor DarkGray
     Write-Host ""
 }
 
@@ -349,11 +347,11 @@ function Test-ErrorRecoverable {
     .DESCRIPTION
     Determines if the error condition might resolve with a retry attempt.
 
-    .PARAMETER Error
+    .PARAMETER ErrorInfo
     AgentSyncError object to test.
 
     .EXAMPLE
-    if (Test-ErrorRecoverable -Error $error) {
+    if (Test-ErrorRecoverable -ErrorInfo $syncError) {
         # Retry logic
     }
     #>
@@ -361,22 +359,22 @@ function Test-ErrorRecoverable {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [AgentSyncError]$Error
+        [AgentSyncError]$ErrorInfo
     )
 
     # Network errors are typically transient
-    if ($Error.Category -eq [ErrorCategory]::Network) {
+    if ($ErrorInfo.Category -eq [ErrorCategory]::Network) {
         return $true
     }
 
     # Some Git errors can be retried (not conflicts or validation)
-    if ($Error.Category -eq [ErrorCategory]::Git -and
-        $Error.Message -notmatch "conflict|merge") {
+    if ($ErrorInfo.Category -eq [ErrorCategory]::Git -and
+        $ErrorInfo.Message -notmatch "conflict|merge") {
         return $true
     }
 
     # Authentication issues might resolve after re-auth
-    if ($Error.Category -eq [ErrorCategory]::Authentication) {
+    if ($ErrorInfo.Category -eq [ErrorCategory]::Authentication) {
         return $true
     }
 
@@ -391,20 +389,20 @@ function Write-ErrorReport {
     .DESCRIPTION
     Creates a JSON error report file for diagnostics and support.
 
-    .PARAMETER Error
+    .PARAMETER ErrorInfo
     AgentSyncError object to report.
 
     .PARAMETER OutputPath
     Directory for error reports (default: logs/errors/).
 
     .EXAMPLE
-    Write-ErrorReport -Error $error
+    Write-ErrorReport -ErrorInfo $syncError
     #>
 
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [AgentSyncError]$Error,
+        [AgentSyncError]$ErrorInfo,
 
         [string]$OutputPath = "logs/errors"
     )
@@ -417,10 +415,10 @@ function Write-ErrorReport {
 
         # Generate report filename
         $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-        $reportFile = Join-Path $OutputPath "error-$timestamp-$($Error.ErrorId.Substring(0,8)).json"
+        $reportFile = Join-Path $OutputPath "error-$timestamp-$($ErrorInfo.ErrorId.Substring(0,8)).json"
 
         # Write report
-        $Error.ToHashtable() | ConvertTo-Json -Depth 10 | Set-Content $reportFile -Encoding UTF8
+        $ErrorInfo.ToHashtable() | ConvertTo-Json -Depth 10 | Set-Content $reportFile -Encoding UTF8
 
         Write-Verbose "Error report written: $reportFile"
     }

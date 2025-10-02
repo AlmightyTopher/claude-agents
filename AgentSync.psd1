@@ -24,12 +24,8 @@
     PowerShellVersion = '7.0'
 
     # Modules that must be imported into the global environment prior to importing this module
-    RequiredModules = @(
-        @{
-            ModuleName = 'Pester'
-            ModuleVersion = '5.0.0'
-        }
-    )
+    # Note: Pester is only required for running tests, not for using the module
+    RequiredModules = @()
 
     # Functions to export from this module
     FunctionsToExport = @(

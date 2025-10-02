@@ -186,52 +186,10 @@ function Start-FileWatcher {
         # Start monitoring
         $watcher.EnableRaisingEvents = $true
 
-        # Start debounce processor job if AutoSync enabled
+        # Auto-sync feature (v2.0 - currently disabled due to scope complexity)
         if ($AutoSync) {
-            $processorJob = Start-Job -ScriptBlock {
-                param($WatcherId, $DebounceSeconds)
-
-                while ($true) {
-                    Start-Sleep -Seconds 1
-
-                    $config = $using:FileWatchers[$WatcherId]
-                    if (-not $config) { break }
-
-                    $now = Get-Date
-                    $timeSinceLastChange = ($now - $config.LastChangeTime).TotalSeconds
-
-                    # Process pending changes if debounce period elapsed
-                    if ($config.PendingChanges.Count -gt 0 -and $timeSinceLastChange -ge $DebounceSeconds) {
-                        $changedFiles = $config.PendingChanges.Keys | ForEach-Object { $_ }
-
-                        Write-SyncLog -Message "Debounce period elapsed. Processing $($changedFiles.Count) file(s)" `
-                                      -Level Info -Category System
-
-                        # Trigger auto-sync
-                        try {
-                            $syncResult = Sync-Repository -Path $config.Path
-
-                            if ($syncResult.Status -eq "Success") {
-                                Write-SyncLog -Message "Auto-sync successful" `
-                                              -Level Info -Category Push
-                            }
-                            else {
-                                Write-SyncLog -Message "Auto-sync failed: $($syncResult.Message)" `
-                                              -Level Error -Category Push
-                            }
-                        }
-                        catch {
-                            Write-SyncLog -Message "Auto-sync error: $($_.Exception.Message)" `
-                                          -Level Error -Category System
-                        }
-
-                        # Clear pending changes
-                        $config.PendingChanges.Clear()
-                    }
-                }
-            } -ArgumentList $watcherId, $DebounceSeconds
-
-            $script:WatcherJobs[$watcherId] = $processorJob
+            Write-Warning "Auto-sync feature is currently disabled. Use manual sync with Sync-Agents."
+            # TODO v2.0: Implement auto-sync with PowerShell runspace instead of job
         }
 
         Write-Host "✓ File watcher started" -ForegroundColor Green
