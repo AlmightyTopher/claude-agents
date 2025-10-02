@@ -76,10 +76,10 @@
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 
 ### Models [P]
-- [ ] **T021** [P] AgentFile model class in src/models/AgentFile.psm1 - Properties: FilePath, FileName, LastModified, GitStatus, ContentHash, IsValid, ValidationErrors
-- [ ] **T022** [P] SyncOperation model class in src/models/SyncOperation.psm1 - Properties: OperationId, OperationType, Timestamp, Status, AffectedFiles, CommitMessage, CommitHash, ErrorMessage, Duration
-- [ ] **T023** [P] Conflict model class in src/models/Conflict.psm1 - Properties: ConflictId, FilePath, DetectedAt, LocalChanges, RemoteChanges, ResolutionStatus, ResolutionStrategy, ResolvedAt
-- [ ] **T024** [P] SyncLog model class in src/models/SyncLog.psm1 - Properties: LogId, Operations, SessionStart, SessionEnd, TotalFiles, SuccessCount, FailureCount, ConflictCount
+- [x] **T021** [P] AgentFile model class in src/models/AgentFile.psm1 - Properties: FilePath, FileName, LastModified, GitStatus, ContentHash, IsValid, ValidationErrors
+- [x] **T022** [P] SyncOperation model class in src/models/SyncOperation.psm1 - Properties: OperationId, OperationType, Timestamp, Status, AffectedFiles, CommitMessage, CommitHash, ErrorMessage, Duration
+- [x] **T023** [P] Conflict model class in src/models/Conflict.psm1 - Properties: ConflictId, FilePath, DetectedAt, LocalChanges, RemoteChanges, ResolutionStatus, ResolutionStrategy, ResolvedAt
+- [x] **T024** [P] SyncLog model class in src/models/SyncLog.psm1 - Properties: LogId, Operations, SessionStart, SessionEnd, TotalFiles, SuccessCount, FailureCount, ConflictCount
 
 ### Services (Sequential - Dependencies)
 - [ ] **T025** GitService in src/services/GitService.psm1 - Functions: Invoke-GitPull, Invoke-GitCommit, Invoke-GitPush, Get-GitStatus, Test-NetworkConnectivity
