@@ -39,11 +39,11 @@
 ---
 
 ## Phase 3.1: Setup
-- [ ] **T001** Create project directory structure (src/models/, src/services/, src/cli/, src/lib/, tests/contract/, tests/integration/, tests/unit/, logs/)
-- [ ] **T002** Initialize PowerShell module manifest (AgentSync.psd1) with dependencies on Pester 5.0+
-- [ ] **T003** [P] Create .gitignore file with patterns for logs/, *.log, .env, credentials.json, *.key
-- [ ] **T004** [P] Configure Pester test framework (PesterConfiguration.ps1) with output formatting and code coverage
-- [ ] **T005** [P] Create README.md in repository root documenting installation, usage, and dependencies
+- [x] **T001** Create project directory structure (src/models/, src/services/, src/cli/, src/lib/, tests/contract/, tests/integration/, tests/unit/, logs/)
+- [x] **T002** Initialize PowerShell module manifest (AgentSync.psd1) with dependencies on Pester 5.0+
+- [x] **T003** [P] Create .gitignore file with patterns for logs/, *.log, .env, credentials.json, *.key
+- [x] **T004** [P] Configure Pester test framework (PesterConfiguration.ps1) with output formatting and code coverage
+- [x] **T005** [P] Create README.md in repository root documenting installation, usage, and dependencies
 
 ---
 
