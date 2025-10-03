@@ -47,7 +47,34 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+**Principle I: Purpose & Version Control Rationale**
+- [ ] Agent specification stored in GitHub repository
+- [ ] Changes tracked through Git commits
+
+**Principle II: Collaboration Through Git**
+- [ ] Latest changes pulled before modifications (`git pull origin master`)
+- [ ] Commit messages describe agent behavior changes
+- [ ] Changes pushed to remote after commits
+
+**Principle III: Autonomy & Boundaries**
+- [ ] One specification file per agent
+- [ ] No modifications to other agents' files
+- [ ] Dependencies explicitly declared
+- [ ] Unique, descriptive agent name used
+
+**Principle IV: Reliability & Sync Integrity**
+- [ ] Agent files validated before commit
+- [ ] Locally tested before pushing
+- [ ] No commits that break sync workflows
+
+**Principle V: Security & Secrets Management**
+- [ ] No API tokens, keys, or credentials in agent files
+- [ ] Environment variables used for secrets
+- [ ] Sensitive patterns added to `.gitignore`
+
+**Principle VI: Evolution & Amendment Process**
+- [ ] Constitutional changes documented and approved
+- [ ] Templates updated when principles change
 
 ## Project Structure
 
