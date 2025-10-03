@@ -1,96 +1,190 @@
-# Agent Sync - Claude Code Agent Synchronization System
+# AgentSync - Claude Code Agent Synchronization System
 
-Git-based synchronization system for Claude Code agent files across multiple machines.
+> **PowerShell module for Git-based synchronization of Claude Code agent specifications across machines and teams.**
+
+Keep your Claude Code agent files in sync across multiple machines, prevent conflicts, and maintain a single source of truth in GitHub. Built with PowerShell 7+ for cross-platform compatibility.
+
+[![PowerShell](https://img.shields.io/badge/PowerShell-7.0%2B-blue)](https://github.com/PowerShell/PowerShell)
+[![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](https://github.com/PowerShell/PowerShell)
+
+---
+
+## Why AgentSync?
+
+Working with Claude Code agents across multiple machines or team members? AgentSync solves common problems:
+
+- ✅ **No More Conflicts**: Pull-before-modify workflow prevents merge conflicts
+- ✅ **Security First**: Automatically scans for hardcoded credentials before commits
+- ✅ **One Command Sync**: `Sync-Agents` handles pull → validate → commit → push
+- ✅ **Works Offline**: Gracefully handles network failures, queues changes locally
+- ✅ **Cross-Platform**: Windows, macOS, and Linux support via PowerShell 7+
+- ✅ **Audit Trail**: Complete logging of all sync operations
+
+## Quick Start
+
+```powershell
+# Install globally
+Install-Module AgentSync -Scope CurrentUser
+
+# In your agent repository
+Import-Module AgentSync
+
+# Check status
+Get-SyncStatus
+
+# Sync all changes
+Sync-Agents
+```
 
 ## Features
 
-- **Automatic Synchronization**: Pull, validate, commit, and push agent files with a single command
-- **Conflict Detection**: Detects and helps resolve merge conflicts with clear guidance
-- **Validation**: Scans agent files for syntax errors and credentials before committing
-- **Cross-Platform**: Works on Windows, Linux, and macOS via PowerShell 7.0+
-- **Offline Support**: Gracefully handles network failures, allows local work
-- **Comprehensive Logging**: All sync operations logged for troubleshooting
+### 🔄 Automatic Synchronization
+Pull, validate, commit, and push agent files with a single command. No manual Git commands needed.
 
-## Prerequisites
+### ⚠️ Conflict Detection & Resolution
+Detects merge conflicts automatically and provides clear resolution strategies:
+- Keep local changes
+- Accept remote changes
+- Manual merge guidance
+- Auto-resolve simple conflicts
 
-- **PowerShell 7.0+**: [Install PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
-- **Git 2.30+**: [Install Git](https://git-scm.com/downloads)
-- **GitHub CLI** (optional): [Install gh](https://cli.github.com/)
-- **Pester 5.0+**: Install via `Install-Module -Name Pester -MinimumVersion 5.0.0 -Force`
+### 🔒 Security Validation
+Scans agent files before committing for:
+- AWS credentials (`AKIA...`)
+- GitHub tokens (`ghp_...`)
+- API keys and passwords
+- Private keys (`.pem`, `.key`)
+- Generic secrets
+
+### 📊 Real-Time Status
+See at a glance:
+- Pending changes
+- Files modified/added/deleted
+- Commits ahead/behind remote
+- Conflict status
+- Repository health
+
+### 📝 Comprehensive Logging
+All sync operations logged with:
+- Timestamps and durations
+- Files affected
+- Success/failure status
+- Error details
+- Automatic log rotation
 
 ## Installation
 
-### 1. Clone the Repository
+### Prerequisites
+
+- **PowerShell 7.0+**: [Install PowerShell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
+- **Git 2.30+**: [Install Git](https://git-scm.com/downloads)
+- **GitHub account** with agent repository
+
+### Option 1: Install from PowerShell Gallery (Recommended)
 
 ```powershell
+Install-Module -Name AgentSync -Scope CurrentUser
+```
+
+### Option 2: Install from Source
+
+```powershell
+# Clone repository
 git clone https://github.com/AlmightyTopher/claude-agents.git
-cd claude-agents
+
+# Copy to PowerShell modules directory
+$modulePath = "$HOME\Documents\PowerShell\Modules\AgentSync"
+Copy-Item -Path ".\claude-agents\agents" -Destination $modulePath -Recurse
+
+# Verify installation
+Get-Module -ListAvailable AgentSync
 ```
 
-### 2. Import the Module
+### Option 3: Use Directly (No Installation)
 
 ```powershell
-Import-Module ./AgentSync.psd1
+# Navigate to your agent repository
+cd C:\path\to\your\agents
+
+# Import module from local path
+Import-Module C:\path\to\AgentSync\AgentSync.psd1
 ```
 
-### 3. Configure Git
+### Initial Setup
 
 ```powershell
+# In your agent repository directory
 git config user.name "Your Name"
 git config user.email "your.email@example.com"
-```
 
-### 4. Authenticate with GitHub
-
-```powershell
-gh auth login  # If using GitHub CLI
-# OR configure Git credentials
+# Authenticate with GitHub (choose one)
+gh auth login                    # GitHub CLI (recommended)
+git config credential.helper store  # OR use credential helper
 ```
 
 ## Usage
 
-### Daily Workflow
-
-#### Sync Changes (Pull + Commit + Push)
+### Typical Workflow
 
 ```powershell
-# Sync all agent files
+# 1. Start your day - pull latest changes
+cd C:\Users\YourName\.claude\agents
+Import-Module AgentSync
 Sync-Agents
 
-# Dry run (preview without changes)
-Sync-Agents -DryRun
+# 2. Edit your agent files
+code tech-lead-reviewer.md
 
-# Sync specific file or directory
-Sync-Agents -Path agents/my-agent.md
-
-# Skip confirmation prompts
-Sync-Agents -Force
-```
-
-#### Check Sync Status
-
-```powershell
-# Quick status
+# 3. Check what changed
 Get-SyncStatus
 
-# Detailed status with file list
-Get-SyncStatus -Detailed
-
-# JSON output for scripts
-Get-SyncStatus -Json
+# 4. Sync changes back
+Sync-Agents -Message "feat: improve tech lead review criteria"
 ```
 
-#### Resolve Conflicts
+### Common Commands
+
+#### 📤 Sync Changes (Pull + Commit + Push)
 
 ```powershell
-# List all conflicts
-Resolve-SyncConflict
+Sync-Agents                              # Sync all changes
+Sync-Agents -DryRun                      # Preview without executing
+Sync-Agents -Message "Custom message"    # Use custom commit message
+Sync-Agents -Path agents/specific-agent.md  # Sync specific file
+Sync-Agents -Force                       # Skip deletion confirmations
+```
 
-# Get resolution guidance
-Resolve-SyncConflict -FilePath agent1.md -Strategy Manual
+#### 📊 Check Sync Status
 
-# Auto-resolve simple conflicts
-Resolve-SyncConflict -FilePath agent2.md -Strategy KeepLocal -AutoResolve
+```powershell
+Get-SyncStatus                # Quick status overview
+Get-SyncStatus -Detailed      # Show modified file list
+Get-SyncStatus -Json          # Machine-readable output
+```
+
+**Example output:**
+```
+Sync Status
+===========
+
+Last Pull:        2 hours ago
+Pending Changes:  3 files (2 modified, 1 added)
+Local Commits:    0 (in sync)
+Remote Commits:   1 (behind remote)
+Conflicts:        None
+Health:           ✓ Healthy
+
+Next Action: Run Sync-Agents to pull latest changes
+```
+
+#### ⚠️ Resolve Conflicts
+
+```powershell
+Resolve-SyncConflict                    # List all conflicts
+Resolve-SyncConflict -FilePath agent.md -Strategy Manual  # Get guidance
+Resolve-SyncConflict -FilePath agent.md -Strategy KeepLocal -AutoResolve
+Resolve-SyncConflict -FilePath agent.md -Strategy KeepRemote -AutoResolve
 ```
 
 ## Commands
@@ -254,11 +348,44 @@ See [LICENSE](LICENSE)
 - **Documentation**: [Quickstart Guide](specs/001-agents-sync-maintain/quickstart.md)
 - **Specification**: [Feature Spec](specs/001-agents-sync-maintain/spec.md)
 
+## Use Cases
+
+### Solo Developer
+Sync Claude Code agents between work laptop, home desktop, and cloud dev environment:
+```powershell
+# On each machine
+Import-Module AgentSync
+Sync-Agents  # Automatically stays in sync
+```
+
+### Team Collaboration
+Multiple developers working on shared agent specifications:
+- Pull-before-modify prevents conflicts
+- Credential scanning prevents security leaks
+- Audit logs track who changed what
+
+### CI/CD Integration
+Automated agent validation in pipelines:
+```powershell
+Get-SyncStatus -Json | ConvertFrom-Json | ForEach-Object {
+    if ($_.HasConflicts) { exit 1 }
+}
+```
+
+## Performance
+
+- **Git status caching**: 5-second TTL reduces redundant Git calls
+- **Scoped file scanning**: Only scans agent directories
+- **Sub-5 second status checks**: Fast feedback loop
+- **Efficient logging**: JSON-based with automatic rotation
+
 ## Version History
 
 ### 1.0.0 (2025-10-02)
-- Initial release
-- Core synchronization workflow
-- Conflict detection and resolution
-- Validation and credential scanning
-- Cross-platform support
+- ✅ Core synchronization workflow (pull → validate → commit → push)
+- ✅ Conflict detection and resolution strategies
+- ✅ Security validation (6 credential patterns)
+- ✅ Cross-platform support (Windows, macOS, Linux)
+- ✅ Comprehensive logging with rotation
+- ✅ Git status caching for performance
+- ⚠️ File watcher auto-sync (planned for v2.0)
